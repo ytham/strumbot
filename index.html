@@ -1,0 +1,44 @@
+<html>
+  <head>
+    <title>Strumbot Web Interface</title>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script>
+      $(document).ready(function() {
+        var socket = io.connect('http://localhost');
+        socket.on('start', function (data) {
+          console.log(data);
+        });
+        $("#1").click(function() {
+          socket.emit('click_1', '1');
+        });
+ 
+        $("#2").click(function() {
+          socket.emit('click_2', '2');
+        });
+ 
+        $("#3").click(function() {
+          socket.emit('click_3', '3');
+        });
+
+        $("#4").click(function() {
+          socket.emit('click_4', '4');
+        });
+      });
+    </script>
+    <script>
+      
+    </script>
+    <style>
+      button {
+        font-size: 30pt;
+      }
+    </style>
+  </head>
+  <body>
+    <button id="1">x x xxxx</button><br>
+    <button id="2">xxxx xx </button><br>
+    <button id="3">x xx xx </button><br>
+    <button id="4">x x x x </button><br>
+  </body>
+</html>
