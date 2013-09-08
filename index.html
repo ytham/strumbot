@@ -10,19 +10,19 @@
           console.log(data);
         });
         $("#1").click(function() {
-          socket.emit('click_1', '1');
+          socket.emit('click_1', 'x x xxxx');
         });
  
         $("#2").click(function() {
-          socket.emit('click_2', '2');
+          socket.emit('click_2', 'xxxx xx ');
         });
  
         $("#3").click(function() {
-          socket.emit('click_3', '3');
+          socket.emit('click_3', 'x xx xx ');
         });
 
         $("#4").click(function() {
-          socket.emit('click_4', '4');
+          socket.emit('click_4', 'x x x x ');
         });
       });
     </script>
@@ -32,6 +32,9 @@
     <style>
       button {
         font-size: 30pt;
+        height: 80px;
+        width: 300px;
+        margin: 20px;
       }
     </style>
   </head>

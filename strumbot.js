@@ -36,19 +36,19 @@ http.listen(8080);
 io.sockets.on('connection', function(socket) {
   socket.emit('start', { hello: 'world' });
   socket.on('click_1', function(data) {
-    currentPattern = patternArray[0];
+    currentPattern = data;
     console.log("1: " + currentPattern);
   });
   socket.on('click_2', function(data) {
-    currentPattern = patternArray[1];
+    currentPattern = data;
     console.log("2: " + currentPattern);
   });
   socket.on('click_3', function(data) {
-    currentPattern = patternArray[2];
+    currentPattern = data;
     console.log("3: " + currentPattern);
   });
   socket.on('click_4', function(data) {
-    currentPattern = patternArray[3];
+    currentPattern = data;
     console.log("4: " + currentPattern);
   });
 });
