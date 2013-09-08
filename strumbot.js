@@ -51,6 +51,10 @@ io.sockets.on('connection', function(socket) {
     currentPattern = data;
     console.log("4: " + currentPattern);
   });
+  socket.on('click_stop', function(data) {
+    currentPattern = data;
+    console.log("Stop." + currentPattern);
+  });
 });
 
 // Initialize johnny-five board and run
@@ -65,7 +69,6 @@ board.on('ready', function() {
 
   this.loop(400, function () {
     readPattern(servo, currentPattern);
-    console.log("currentPattern: " + currentPattern);
   });
 });
 
@@ -80,7 +83,8 @@ function readPattern(servo, pattern) {
 
   if (currentBeat > pattern.length - 1) {
     currentBeat = 0;
-    console.log("------------");
+    console.log("------------");  
+    console.log("currentPattern: " + currentPattern);
   }
 }
 

@@ -24,6 +24,10 @@
         $("#4").click(function() {
           socket.emit('click_4', 'x x x x ');
         });
+
+        $("#stop").click(function() {
+          socket.emit('click_stop', '        ');
+        });
       });
     </script>
     <script>
@@ -32,16 +36,48 @@
     <style>
       button {
         font-size: 30pt;
-        height: 80px;
-        width: 300px;
-        margin: 20px;
+        height: 75px;
+        width: 250px;
+        margin: 15px;
+      }
+      .monospace {
+        border:1px solid #999999;
+        font-family:Consolas,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New, monospace;
       }
     </style>
   </head>
   <body>
+    <table border=0>
+      <tr>
+        <td width="350px">
     <button id="1">x x xxxx</button><br>
     <button id="2">xxxx xx </button><br>
     <button id="3">x xx xx </button><br>
     <button id="4">x x x x </button><br>
+    <button id="stop">Stop</button><br>
+        </td>
+        <td>
+          <pre>
+G              Em
+Almost heaven, West Virginia,
+D                     C          G
+Blue Ridge Mountains, Shenandoah River.
+                   Em
+Life is old there, older than the trees,
+D                           C              G
+Younger than the mountains, growin' like a breeze. 
+
+G                      D
+Country roads, take me home,
+       Em       C
+To the place I belong: 
+     G                  D
+West Virginia, mountain momma, 
+        C             G
+Take me home, country roads.
+          </pre>
+        </td>
+      </tr>
+    </table>
   </body>
 </html>
