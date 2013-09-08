@@ -33,6 +33,7 @@ function handler (req, res) {
 
 http.listen(8080);
 
+// Socket io connection
 io.sockets.on('connection', function(socket) {
   socket.emit('start', { hello: 'world' });
   socket.on('click_1', function(data) {
