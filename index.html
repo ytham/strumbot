@@ -25,6 +25,10 @@
           socket.emit('click_4', 'x x x x ');
         });
 
+        $("#5").click(function() {
+          socket.emit('click_5', 'xxx xx xxxx xx ');
+        });
+
         $("#stop").click(function() {
           socket.emit('click_stop', '        ');
         });
@@ -54,6 +58,7 @@
     <button id="2">xxxx xx </button><br>
     <button id="3">x xx xx </button><br>
     <button id="4">x x x x </button><br>
+    <button id="5">xxx xx xxxx xx</button><br>
     <button id="stop">Stop</button><br>
         </td>
         <td>

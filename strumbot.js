@@ -52,9 +52,13 @@ io.sockets.on('connection', function(socket) {
     currentPattern = data;
     console.log("4: " + currentPattern);
   });
+  socket.on('click_5', function(data) {
+    currentPattern = data;
+    console.log("5: " + currentPattern);
+  });
   socket.on('click_stop', function(data) {
     currentPattern = data;
-    console.log("Stop." + currentPattern);
+    console.log("Stop.");
   });
 });
 
