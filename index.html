@@ -32,6 +32,11 @@
         $("#stop").click(function() {
           socket.emit('click_stop', '        ');
         });
+
+        socket.on('BeatReset', function (data) {
+          console.log("Socket caught:" + data);
+          $(.box).className = "newBox";
+        });
       });
     </script>
     <script>
@@ -48,9 +53,19 @@
         border:1px solid #999999;
         font-family:Consolas,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New, monospace;
       }
+      .box {
+        border: 2px solid #000000;
+        background-color: #00AAFF;
+        color: #000000;
+      }
+      .newBox {
+        background-color: #003355;
+        color: #ffffff;
+      }
     </style>
   </head>
   <body>
+    <font size="+4"><center>Strumbot Web Interface</center></font>
     <table border=0>
       <tr>
         <td width="350px">
@@ -83,6 +98,7 @@ West Virginia, mountain momma,
 Take me home, country roads.
           </pre>
           </font>
+          <div class="box">Box</div>
         </td>
       </tr>
     </table>

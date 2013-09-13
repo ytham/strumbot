@@ -7,7 +7,6 @@ var five = require('johnny-five');
 var fs = require('fs');
 var http = require('http').createServer(handler);
 var io = require('socket.io').listen(http);
-var leap = require('leapjs');
 
 var board, servo;
 var moveAngle;
@@ -17,7 +16,7 @@ var currentPattern = 'x x x x ';
 var currentBeat = 0;
 
 // Load pattern array from text file
-var patternArray = fs.readFileSync('patterns.txt').toString().split("\n");
+//var patternArray = fs.readFileSync('patterns.txt').toString().split("\n");
 
 // Initialize webserver
 function handler (req, res) {
@@ -61,36 +60,39 @@ io.sockets.on('connection', function(socket) {
     currentPattern = data;
     console.log("Stop.");
   });
-});
 
-// Initialize johnny-five board and run
-board = new five.Board();
-board.on('ready', function() {
-  servo = new five.Servo(9);
+  // Initialize johnny-five board and run
+  board = new five.Board();
+  board.on('ready', function() {
+    servo = new five.Servo(9);
 
-  // Initial position on start
-  moveAngle = 60;
-  servo.move(moveAngle);
-  currentPattern = patternArray[0];
+    // Initial position on start
+    moveAngle = 60;
+    servo.move(moveAngle);
+    currentPattern = patternArray[0];
 
-  this.loop(400, function () {
-    readPattern(servo, currentPattern);
+    this.loop(400, function () {
+      readPattern(servo, socket, currentPattern);
+    });
   });
 });
 
-function readPattern(servo, pattern) {
+
+function readPattern(servo, socket, pattern) {
   console.log("[Beat] " + currentBeat + ": " + pattern[currentBeat]);
   if (pattern[currentBeat] === 'x') {
     strum(servo);
   } else {
     // Pause;
   }
+  socket.emit(pattern[currentBeat], pattern[currentBeat]);
   currentBeat++;
 
   if (currentBeat > pattern.length - 1) {
     currentBeat = 0;
     console.log("------------");  
     console.log("currentPattern: " + currentPattern);
+    socket.emit("BeatReset", "stop");
   }
 }
 
