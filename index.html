@@ -1,9 +1,57 @@
 <html>
   <head>
     <title>Strumbot Web Interface</title>
+    <link rel="stylesheet" type="text/css" src="/stylesheets/strumbot.css">
     <script src="/socket.io/socket.io.js"></script>
     <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
-    <script>
+    <srcipt src="/javascripts/leapcontrol.js"></script>
+    <script src="http://js.leapmotion.com/0.2.1/leap.min.js"></script>
+    <script type="text/javascript">
+      var handPosition = [];
+      var lastHandPosition = [];
+      var moveHand;
+      var active = false;
+      //document.getElementById('selector').style.visibility = "hidden";
+
+      var controller = new Leap.Controller();
+      controller.loop(function (frame) {
+
+        // Get window variables and loop through each time to ensure values are updated
+        var windowHeight = $(window).height();
+        var windowWidth = $(window).width();
+
+        // Get Leap hand representation and palm position of the hand
+        var hand = frame.hands[0];
+        handPosition = hand.palmPosition;
+        console.log(hand.sphereRadius);
+
+        // Get position of the selector div; this is the main UI control for the user
+        var selectorPosition = $('#selector').offset();
+
+        // Move hand if hand
+        if (hand && hand.sphereRadius < 70) {
+          document.getElementById('selector').style.visibility = "visible";
+          moveHand = {
+            x: (handPosition[0] - lastHandPosition[0])/windowWidth,
+            y: (handPosition[1] - lastHandPosition[1])/windowHeight,
+            z: handPosition[2] - lastHandPosition[2]
+          }
+          $('#selector').css('left', function () {
+            return selectorPosition.left + moveHand.x + "%";
+          });
+          $('#selector').css('top', function () {
+            return selectorPosition.top - moveHand.y + "%";
+          });
+          //$('#selector').style.left = selectorPosition.left + moveHand.x + "px";
+          //$('#selector').style.top = selectorPosition.top - moveHand.y + "px";
+        } else {
+          document.getElementById('selector').style.visibility = "hidden";
+        }
+
+        // Set last hand position to the current hand position and loop
+        lastHandPosition = handPosition; 
+      });
+
       $(document).ready(function() {
         var socket = io.connect('http://localhost');
         socket.on('start', function (data) {
@@ -26,81 +74,99 @@
         });
 
         $("#5").click(function() {
-          socket.emit('click_5', 'xxx xx xxxx xx ');
+          socket.emit('click_5', 'xx xx x ');
         });
 
         $("#stop").click(function() {
           socket.emit('click_stop', '        ');
         });
 
-        socket.on('BeatReset', function (data) {
-          console.log("Socket caught:" + data);
-          $(.box).className = "newBox";
-        });
+        //socket.on('BeatReset', function (data) {
+        //  console.log("Socket caught:" + data);
+        //  $(.box).className = "newBox";
+        //});
+
+        //var Leap = require('leapjs');
       });
-    </script>
-    <script>
-      
+
+
     </script>
     <style>
-      button {
-        font-size: 30pt;
-        height: 75px;
-        width: 250px;
-        margin: 15px;
-      }
-      .monospace {
-        border:1px solid #999999;
-        font-family:Consolas,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New, monospace;
-      }
-      .box {
-        border: 2px solid #000000;
-        background-color: #00AAFF;
-        color: #000000;
-      }
-      .newBox {
-        background-color: #003355;
-        color: #ffffff;
-      }
+    body {
+      margin: 0px;
+      padding: 0px;
+      font-family: Helvetica Neue;
+      font-weight: lighter;
+    }
+
+    .button {
+      font-size: 30pt;
+      height: 75px;
+      width: 250px;
+      margin: 15px;
+      font-family: Monaco, monospace;
+    }
+
+    #selector {
+      display: inline-block;
+      background-color: #FF0000;
+      position: absolute;
+      top: 100px;
+      left: 400px;
+      height: 100px;
+      width: 100px;
+      border-radius: 50px;
+    }
+
+    .selected {
+      background-color: #FF0000;
+      opacity: 1;
+    }
+
+    .monospace {
+      border:1px solid #999999;
+      font-family:Consolas,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New, monospace;
+    }
+
+    .box {
+      border: 2px solid #000000;
+      background-color: #00AAFF;
+      color: #000000;
+    }
+
+    .newBox {
+      background-color: #003355;
+      color: #ffffff;
+    }
+
+    .strumPattern {
+      display: inline-block;
+      background-color: #CCEEFF;
+      color: #000000;
+      text-align: center;
+      vertical-align: center;
+      font-size: 4em;
+      width: 100%;
+      height: 25%;
+      margin: 1px;
+    }
     </style>
   </head>
   <body>
-    <font size="+4"><center>Strumbot Web Interface</center></font>
-    <table border=0>
-      <tr>
-        <td width="350px">
-    <button id="1">x x xxxx</button><br>
-    <button id="2">xxxx xx </button><br>
-    <button id="3">x xx xx </button><br>
-    <button id="4">x x x x </button><br>
-    <button id="5">xxx xx xxxx xx</button><br>
-    <button id="stop">Stop</button><br>
-        </td>
-        <td>
-          <font size="+2">
-          <pre>
-G              Em
-Almost heaven, West Virginia,
-D                     C          G
-Blue Ridge Mountains, Shenandoah River.
-                   Em
-Life is old there, older than the trees,
-D                           C              G
-Younger than the mountains, growin' like a breeze. 
+    <div class="strumPattern">x_x_xxxx</div>
+    <div class="strumPattern">xxxx_xx_</div>
+    <div class="strumPattern">x_xx_xx_</div>
+    <div class="strumPattern">x_x_x_x_</div>
 
-G                      D
-Country roads, take me home,
-       Em       C
-To the place I belong: 
-     G                  D
-West Virginia, mountain momma, 
-        C             G
-Take me home, country roads.
-          </pre>
-          </font>
-          <div class="box">Box</div>
-        </td>
-      </tr>
-    </table>
+    <font size="+4"><center>Strumbot Web Interface</center></font>
+
+    <button class="button" id="1">x_x_xxxx</button><br>
+    <button class="button" id="2">xxxx_xx_</button><br>
+    <button class="button" id="3">x_xx_xx_</button><br>
+    <button class="button" id="4">x_x_x_x_</button><br>
+    <button class="button" id="5">xx_xx_x_</button><br>
+    <button class="button" id="stop">Stop</button><br>
+
+          <div id="selector"></div>
   </body>
 </html>

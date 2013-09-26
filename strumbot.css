@@ -1,0 +1,43 @@
+body {
+  margin: 0px;
+  padding: 0px;
+}
+
+.button {
+  font-size: 30pt;
+  height: 75px;
+  width: 250px;
+  margin: 15px;
+}
+
+#selector {
+  display: inline-block;
+  position: absolute;
+  top: 100px;
+  left: 400px;
+  height: 100px;
+  width: 100px;
+  border-radius: 50px;
+  opacity: 0;
+}
+
+.selected {
+  background-color: #FF0000;
+  opacity: 1;
+}
+
+.monospace {
+  border:1px solid #999999;
+  font-family:Consolas,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New, monospace;
+}
+
+.box {
+  border: 2px solid #000000;
+  background-color: #00AAFF;
+  color: #000000;
+}
+
+.newBox {
+  background-color: #003355;
+  color: #ffffff;
+}

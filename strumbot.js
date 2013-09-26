@@ -8,6 +8,7 @@ var fs = require('fs');
 var http = require('http').createServer(handler);
 var io = require('socket.io').listen(http);
 var leap = require('leapjs');
+var path = require('path');
 
 var board, servo;
 var moveAngle;
@@ -102,4 +103,19 @@ function strum(servo) {
     moveAngle = 60;
     servo.move(moveAngle);
   }
+}
+
+function handleResources(pathName, res) {
+  var ext = path.extname(pathName);
+  switch(ext) {
+    case '.css':
+      res.writeHead(200, {"Content-Type": "text/css"});
+      break;
+    case '.js':
+      res.writeHead(200, {"Content-Type": "text/javascript"});
+      break;
+  }
+  fs.readFile('./' + pathName, 'utf8', function (err, fd) {
+    res.end(fd);
+  });
 }
