@@ -10,46 +10,85 @@
       var handPosition = [];
       var lastHandPosition = [];
       var moveHand;
+      var activationSize = 70;
       var active = false;
       //document.getElementById('selector').style.visibility = "hidden";
+      
 
       var controller = new Leap.Controller();
       controller.loop(function (frame) {
 
-        // Get window variables and loop through each time to ensure values are updated
-        var windowHeight = $(window).height();
-        var windowWidth = $(window).width();
+        if (frame.hands.length > 0) {
 
-        // Get Leap hand representation and palm position of the hand
-        var hand = frame.hands[0];
-        handPosition = hand.palmPosition;
-        console.log(hand.sphereRadius);
+          // Get window variables and loop through each time to ensure values are updated
+          var windowHeight = $(window).height();
+          var windowWidth = $(window).width();
 
-        // Get position of the selector div; this is the main UI control for the user
-        var selectorPosition = $('#selector').offset();
+          // Get Leap hand representation and palm position of the hand
+          var hand = frame.hands[0];
+          handPosition = hand.palmPosition;
+          console.log(hand.sphereRadius);
 
-        // Move hand if hand
-        if (hand && hand.sphereRadius < 70) {
-          document.getElementById('selector').style.visibility = "visible";
-          moveHand = {
-            x: (handPosition[0] - lastHandPosition[0])/windowWidth,
-            y: (handPosition[1] - lastHandPosition[1])/windowHeight,
-            z: handPosition[2] - lastHandPosition[2]
+          // Get position of the selector div; this is the main UI control for the user
+          var selectorPosition = $('#selector').offset();
+          var selectorWidth = $('#selector').width();
+          var selectorHeight = $('#selector').height();
+          var selectorCenter = {
+            x: selectorPosition.left + selectorWidth/2,
+            y: selectorPosition.top + selectorHeight/2
+          };
+
+          //var selectorPositionPercent = offsetToPercentage(selectorPosition);
+
+          // Move hand if hand
+          if (hand && hand.sphereRadius < activationSize) {
+            document.getElementById('selector').style.visibility = "visible";
+            moveHand = {
+              x: handPosition[0] - lastHandPosition[0],
+              y: handPosition[1] - lastHandPosition[1],
+              z: handPosition[2] - lastHandPosition[2]
+            }
+            /*
+            $('#selector').css('left', function () {
+              selectorPositionPercent.x += moveHand.x;
+              if (selectorPositionPercent.x > 95) selectorPositionPercent = 95;
+              if (selectorPositionPercent.x < 0) selectorPositionPercent = 0;
+              selectorPositionPercent.x += "%";
+              console.log(selectorPositionPercent.x);
+              selectorPosition.x += moveHand.x
+              return selectorPosition.x;
+            });*/
+            $('#selector').css('left', function () { return windowWidth/2 - 400; });
+            $('#selector').css('top', function () {
+              selectorCenter.y -= moveHand.y*3;
+              if (selectorCenter.y > $('#patternContainer').height()) selectorCenter = $('#patternContainer').height();
+              if (selectorCenter.y < 0) selectorCenter = 0;
+              selectorCenter.y -= selectorHeight/2;
+              selectorCenter.y += "px";
+              return selectorCenter.y;
+            });
+            //$('#selector').style.left = selectorPosition.left + moveHand.x + "px";
+            //$('#selector').style.top = selectorPosition.top - moveHand.y + "px";
+          } else {
+            document.getElementById('selector').style.visibility = "hidden";
           }
-          $('#selector').css('left', function () {
-            return selectorPosition.left + moveHand.x + "%";
-          });
-          $('#selector').css('top', function () {
-            return selectorPosition.top - moveHand.y + "%";
-          });
-          //$('#selector').style.left = selectorPosition.left + moveHand.x + "px";
-          //$('#selector').style.top = selectorPosition.top - moveHand.y + "px";
-        } else {
-          document.getElementById('selector').style.visibility = "hidden";
-        }
 
-        // Set last hand position to the current hand position and loop
-        lastHandPosition = handPosition; 
+          // Update with new values
+          //selectorPosition = $('#selector').offset();
+          //selectorPositionPercent = offsetToPercentage(selectorPosition);
+
+          // Check which one it's over
+          optionHeight = $('#strumPattern1').height();
+          if(selectorCenter.y < optionHeight) {
+            $('#strumPattern1').addClass('selected');
+            console.log("TRUE!");
+          } else if (selectorCenter.y > optionHeight && selectorCenter.y < optionHeight*2) {
+            $('#strumPattern2').addClass('selected');
+          }
+
+          // Set last hand position to the current hand position and loop
+          lastHandPosition = handPosition; 
+        }
       });
 
       $(document).ready(function() {
@@ -86,10 +125,18 @@
         //  $(.box).className = "newBox";
         //});
 
-        //var Leap = require('leapjs');
+        document.getElementById('selector').style.visibility = "hidden";
       });
 
+      function offsetToPercentage(selector) {
+        var windowHeight = $(window).height();
+        var windowWidth = $(window).width();
 
+        var x = 100*selector.left/windowWidth;
+        var y = 100*selector.top/windowHeight;
+
+        return {x: x, y: y};
+      }
     </script>
     <style>
     body {
@@ -107,12 +154,20 @@
       font-family: Monaco, monospace;
     }
 
+    #title {
+      display: inline-block;
+      position: absolute;
+      top: 40%;
+      text-align: left;
+    }
+
     #selector {
       display: inline-block;
       background-color: #FF0000;
       position: absolute;
-      top: 100px;
-      left: 400px;
+      opacity: 0.5;
+      top: 20px;
+      left: 45%;
       height: 100px;
       width: 100px;
       border-radius: 50px;
@@ -139,12 +194,22 @@
       color: #ffffff;
     }
 
+    #patternContainer { 
+      display: block;
+      background-color: #FFFFFF;
+      text-align: center;
+      height: 500px;
+      width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
     .strumPattern {
       display: inline-block;
       background-color: #CCEEFF;
       color: #000000;
       text-align: center;
-      vertical-align: center;
+      letter-spacing: 0.4em;
       font-size: 4em;
       width: 100%;
       height: 25%;
@@ -153,12 +218,17 @@
     </style>
   </head>
   <body>
-    <div class="strumPattern">x_x_xxxx</div>
-    <div class="strumPattern">xxxx_xx_</div>
-    <div class="strumPattern">x_xx_xx_</div>
-    <div class="strumPattern">x_x_x_x_</div>
-
-    <font size="+4"><center>Strumbot Web Interface</center></font>
+    <div id="title">
+      <font size="+3"><center>Strumbot<br>Interface</center></font>
+    </div>
+    <div id="patternContainer">
+      <div id="strumPattern1" class="strumPattern">x_x_xxxx</div>
+      <div id="strumPattern2" class="strumPattern">xxxx_xx_</div>
+      <div id="strumPattern3" class="strumPattern">x_xx_xx_</div>
+      <div id="strumPattern4" class="strumPattern">x_x_x_x_</div>
+      <div id="selector"></div>
+    </div>
+    <!--
 
     <button class="button" id="1">x_x_xxxx</button><br>
     <button class="button" id="2">xxxx_xx_</button><br>
@@ -167,6 +237,6 @@
     <button class="button" id="5">xx_xx_x_</button><br>
     <button class="button" id="stop">Stop</button><br>
 
-          <div id="selector"></div>
+          -->
   </body>
 </html>
